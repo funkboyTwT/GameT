@@ -161,11 +161,9 @@
     </div>
 
     <script>
-        // 核心安全逻辑：页面加载时立刻检查
-        // 如果买家之前已经解锁过，或者尝试刷新页面，直接重定向到 about:blank 并自我毁灭
-        if (sessionStorage.getItem('page_accessed') === 'true') {
-            document.body.innerHTML = ''; // 清空所有网页内容
-            window.location.replace('about:blank'); // 强制跳到空白页
+        // 本地文件销毁核心：利用 name 属性（该属性在本地文件刷新、重载时依然会被留存）
+        if (window.name === 'destroyed_page' || localStorage.getItem('local_accessed') === 'true') {
+            destroyPage();
         }
 
         // 设置好的访问密码
@@ -178,9 +176,12 @@
             const gameBox = document.getElementById('gameBox');
 
             if (input === CORRECT_PASSWORD) {
-                // 密码正确：标记该页面已被“消耗”
-                sessionStorage.setItem('page_accessed', 'true');
-                
+                // 密码正确：注入“已使用过”的永久印记
+                window.name = 'destroyed_page';
+                try {
+                    localStorage.setItem('local_accessed', 'true');
+                } catch(e) {}
+
                 // 显示游戏内容
                 authBox.style.display = 'none';
                 gameBox.style.display = 'block';
@@ -188,16 +189,27 @@
                 document.body.style.alignItems = 'flex-start';
                 document.body.style.paddingTop = '40px';
 
-                // 监听买家是否试图离开或刷新页面，一旦触发立刻清空
-                window.addEventListener('beforeunload', function () {
-                    document.body.innerHTML = '';
-                    window.location.replace('about:blank');
-                });
+                // 监听买家任何试图离开、刷新或卸载页面的动作，直接当场抹杀
+                window.addEventListener('beforeunload', destroyPage);
+                window.addEventListener('unload', destroyPage);
             } else {
                 errorMsg.style.display = 'block';
                 document.getElementById('passwordInput').value = '';
                 document.getElementById('passwordInput').focus();
             }
+        }
+
+        // 终极自毁函数：清空所有代码，将整个页面变成纯黑色，并且让任何技术都无法还原
+        function destroyPage() {
+            window.name = 'destroyed_page';
+            try {
+                localStorage.setItem('local_accessed', 'true');
+            } catch(e) {}
+            
+            // 彻底抹除页面所有的 HTML 节点和脚本
+            document.open();
+            document.write('<html><head><title>about:blank</title></head><body style="background:#000000;"></body></html>');
+            document.close();
         }
     </script>
 </body>
