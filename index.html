@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的私密游戏库</title>
+    <style>
+        :root {
+            --bg-color: #121214;
+            --card-bg: #1e1e24;
+            --accent-color: #6366f1;
+            --text-color: #f3f4f6;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* 密码验证界面样式 */
+        .auth-container {
+            background-color: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 100%;
+            max-width: 360px;
+        }
+
+        .auth-container h2 {
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .auth-container input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #3f3f46;
+            border-radius: 6px;
+            background-color: #121214;
+            color: #fff;
+            font-size: 1rem;
+            box-sizing: border-box;
+            margin-bottom: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .auth-container input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .auth-container button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent-color);
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .auth-container button:hover {
+            background-color: #4f46e5;
+        }
+
+        .error-msg {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        /* 游戏库内容界面（默认隐藏） */
+        .game-container {
+            display: none;
+            width: 100%;
+            max-width: 1000px;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #27272a;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .logout-btn {
+            background-color: #27272a;
+            border: none;
+            padding: 8px 16px;
+            color: #d1d5db;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background-color: #3f3f46;
+            color: #fff;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .game-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .game-info {
+            padding: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .game-title {
+            font-size: 1.25rem;
+            margin: 0 0 0.5rem 0;
+            color: #fff;
+        }
+
+        .game-desc {
+            font-size: 0.9rem;
+            color: #9ca3af;
+            line-height: 1.4;
+            margin-bottom: 1.5rem;
+        }
+
+        .play-btn {
+            display: block;
+            text-align: center;
+            background-color: var(--accent-color);
+            color: #fff;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .play-btn:hover {
+            background-color: #4f46e5;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. 密码输入界面 -->
+    <div class="auth-container" id="authBox">
+        <h2>🔒 输入访问密码</h2>
+        <input type="password" id="passwordInput" placeholder="请输入密码..." onkeydown="if(event.key==='Enter') verifyPassword()">
+        <button onclick="verifyPassword()">解锁游戏库</button>
+        <div class="error-msg" id="errorMsg">密码错误，请重新输入！</div>
+    </div>
+
+    <!-- 2. 游戏展示界面 -->
+    <div class="game-container" id="gameBox">
+        <div class="header">
+            <h1>🎮 我的私密游戏库</h1>
+            <button class="logout-btn" onclick="logout()">锁定</button>
+        </div>
+
+        <div class="game-grid">
+            <!-- 游戏卡片 1 -->
+            <div class="game-card">
+                <div class="game-info">
+                    <h3 class="game-title">Eaglercraft 1.12</h3>
+                    <p class="game-desc">基于 WebAssembly (WASM-GC) 运行的网页版我的世界 1.12.2，支持直接在浏览器中进行生存与联机。</p>
+                    <a href="https://github.io" target="_blank" class="play-btn">立即游玩</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 已经设置好的访问密码
+        const CORRECT_PASSWORD = "12186010"; 
+
+        function verifyPassword() {
+            const input = document.getElementById('passwordInput').value;
+            const errorMsg = document.getElementById('errorMsg');
+            const authBox = document.getElementById('authBox');
+            const gameBox = document.getElementById('gameBox');
+
+            if (input === CORRECT_PASSWORD) {
+                authBox.style.display = 'none';
+                gameBox.style.display = 'block';
+                errorMsg.style.display = 'none';
+                document.body.style.alignItems = 'flex-start';
+                document.body.style.paddingTop = '40px';
+            } else {
+                errorMsg.style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+            }
+        }
+
+        function logout() {
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('errorMsg').style.display = 'none';
+            document.getElementById('authBox').style.display = 'block';
+            document.getElementById('gameBox').style.display = 'none';
+            document.body.style.alignItems = 'center';
+            document.body.style.paddingTop = '0';
+        }
+    </script>
+</body>
+</html>
