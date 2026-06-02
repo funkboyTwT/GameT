@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>游戏库系统 v2</title>
+<title>游戏库系统 v3</title>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -922,14 +922,18 @@
       <div class="toggle-group" id="bg-toggle"></div>
     </div>
     <div class="form-group">
+      <label class="form-label">背景音乐</label>
+      <div class="toggle-group" id="music-select"></div>
+    </div>
+    <div class="form-group">
       <label class="form-label">音乐音量</label>
       <input type="range" class="form-input" id="music-volume" min="0" max="100" value="30" style="padding:0;height:8px;cursor:pointer">
       <div style="font-size:10px;color:var(--dim);margin-top:8px" id="volume-display">30%</div>
     </div>
     <div class="form-group">
-      <label class="form-label">键盘音效</label>
+      <label class="form-label">键盘音效 (ASMR)</label>
       <div class="toggle-group">
-        <button class="toggle-btn" id="keyboard-sound-toggle" onclick="toggleKeyboardSound()" style="width:100%">启用</button>
+        <button class="toggle-btn active" id="keyboard-sound-toggle" onclick="toggleKeyboardSound()" style="width:100%">启用</button>
       </div>
     </div>
     <div class="modal-actions">
@@ -942,8 +946,8 @@
 
 <script>
 const CORRECT_PASSWORD = '12186010';
-const STORAGE_KEY = 'gamevault_data_v2';
-const SETTINGS_KEY = 'gamevault_settings_v2';
+const STORAGE_KEY = 'gamevault_data_v3';
+const SETTINGS_KEY = 'gamevault_settings_v3';
 const EMOJIS = ['🎮','🕹️','⚔️','🔫','🏎️','🧩','🎯','🏆','🌌','🔥','👾','🤖','🐉','🎲','🗡️','💣','🚀','🌀','⚡','🛡️'];
 
 const COLORS = {
@@ -961,11 +965,19 @@ const BACKGROUNDS = {
   dark: '#0d0d14'
 };
 
+const MUSIC_TRACKS = {
+  ambient: 'https://www.youtube.com/watch?v=tayfXQfFDZE',
+  lofi: 'https://www.youtube.com/watch?v=HdVU6LI-3VY',
+  calm: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+  chillwave: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
+};
+
 let state = loadState();
 let settings = loadSettings();
 let selectedEmoji = '🎮';
 let keyboardSoundEnabled = settings.keyboardSound;
 let musicPlayer = document.getElementById('music-player');
+let audioContext = null;
 
 function loadState() {
   try {
@@ -994,6 +1006,7 @@ function loadSettings() {
   return {
     colorTheme: 'green',
     backgroundColor: 'black',
+    musicTrack: 'calm',
     musicVolume: 30,
     keyboardSound: true
   };
@@ -1055,30 +1068,76 @@ function updateTime() {
 setInterval(updateTime, 1000);
 updateTime();
 
-function playKeyboardSound() {
-  if (!keyboardSoundEnabled) return;
-  const context = new (window.AudioContext || window.webkitAudioContext)();
-  const now = context.currentTime;
-  const osc = context.createOscillator();
-  const gain = context.createGain();
-  osc.connect(gain);
-  gain.connect(context.destination);
-  osc.frequency.setValueAtTime(150 + Math.random() * 50, now);
-  osc.frequency.exponentialRampToValueAtTime(80, now + 0.1);
-  gain.gain.setValueAtTime(0.05, now);
-  gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-  osc.start(now);
-  osc.stop(now + 0.1);
+// 初始化 AudioContext
+function initAudioContext() {
+  if (!audioContext) {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return audioContext;
 }
 
-document.addEventListener('keydown', playKeyboardSound);
+// ASMR 键盘音效 - 多种声音混合
+function playKeyboardSound() {
+  if (!keyboardSoundEnabled) return;
+  
+  try {
+    const ctx = initAudioContext();
+    const now = ctx.currentTime;
+    
+    // 主音 - 低频
+    const osc1 = ctx.createOscillator();
+    const gain1 = ctx.createGain();
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(180 + Math.random() * 40, now);
+    osc1.frequency.exponentialRampToValueAtTime(100, now + 0.08);
+    gain1.gain.setValueAtTime(0.03, now);
+    gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.06);
+    osc1.connect(gain1);
+    gain1.connect(ctx.destination);
+    
+    // 高频 - 清脆音
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.type = 'triangle';
+    osc2.frequency.setValueAtTime(800 + Math.random() * 200, now);
+    osc2.frequency.exponentialRampToValueAtTime(300, now + 0.05);
+    gain2.gain.setValueAtTime(0.02, now);
+    gain2.gain.exponentialRampToValueAtTime(0.005, now + 0.05);
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    
+    // 敲击音 - 噪声
+    const noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * 0.05, ctx.sampleRate);
+    const noiseData = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < noiseBuffer.length; i++) {
+      noiseData[i] = Math.random() * 2 - 1;
+    }
+    const noiseSource = ctx.createBufferSource();
+    noiseSource.buffer = noiseBuffer;
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0.04, now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+    noiseSource.connect(noiseGain);
+    noiseGain.connect(ctx.destination);
+    
+    osc1.start(now);
+    osc1.stop(now + 0.08);
+    osc2.start(now);
+    osc2.stop(now + 0.05);
+    noiseSource.start(now);
+  } catch(e) {
+    console.log('音效播放失败:', e);
+  }
+}
+
+// 键盘事件监听
+document.addEventListener('keydown', (e) => {
+  playKeyboardSound();
+});
 
 function checkPassword() {
   const input = document.getElementById('password-input').value;
   const errorEl = document.getElementById('login-error');
-  
-  console.log('输入的密码:', input);
-  console.log('正确的密码:', CORRECT_PASSWORD);
   
   if (input === CORRECT_PASSWORD) {
     document.getElementById('login-screen').style.display = 'none';
@@ -1112,13 +1171,29 @@ function lockVault() {
 }
 
 function playBackgroundMusic() {
-  const audioUrls = [
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
-  ];
-  musicPlayer.src = audioUrls[Math.floor(Math.random() * audioUrls.length)];
-  musicPlayer.volume = settings.musicVolume / 100;
-  musicPlayer.play().catch(() => {});
+  try {
+    // 使用本地音源
+    const trackUrl = MUSIC_TRACKS[settings.musicTrack] || MUSIC_TRACKS.calm;
+    
+    // 如果是 YouTube URL，转换为嵌入式播放 URL
+    let audioUrl = trackUrl;
+    if (trackUrl.includes('youtube.com') || trackUrl.includes('youtu.be')) {
+      // 使用免费的音乐源替代
+      const tracks = [
+        'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+        'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
+      ];
+      audioUrl = tracks[Math.floor(Math.random() * tracks.length)];
+    }
+    
+    musicPlayer.src = audioUrl;
+    musicPlayer.volume = settings.musicVolume / 100;
+    musicPlayer.play().catch((err) => {
+      console.log('音乐播放失败 (需要交互):', err);
+    });
+  } catch(e) {
+    console.log('音乐初始化失败:', e);
+  }
 }
 
 function launchGame(url) {
@@ -1171,7 +1246,9 @@ function openSettings() {
   document.getElementById('settings-modal').classList.add('open');
   renderColorGrid();
   renderBGToggle();
+  renderMusicSelect();
   updateVolumeDisplay();
+  updateKeyboardSoundButton();
 }
 
 function closeSettings() {
@@ -1195,6 +1272,14 @@ function renderBGToggle() {
   `).join('');
 }
 
+function renderMusicSelect() {
+  const select = document.getElementById('music-select');
+  select.innerHTML = Object.keys(MUSIC_TRACKS).map(key => `
+    <button class="toggle-btn ${settings.musicTrack === key ? 'active' : ''}" 
+            onclick="changeMusic('${key}')">${key === 'calm' ? '宁静' : key === 'ambient' ? '环境' : key === 'lofi' ? 'LoFi' : 'Chill'}</button>
+  `).join('');
+}
+
 function changeColorTheme(theme) {
   settings.colorTheme = theme;
   saveSettings();
@@ -1207,13 +1292,26 @@ function changeBackground(bg) {
   renderBGToggle();
 }
 
+function changeMusic(track) {
+  settings.musicTrack = track;
+  saveSettings();
+  playBackgroundMusic();
+  renderMusicSelect();
+}
+
 function toggleKeyboardSound() {
   settings.keyboardSound = !settings.keyboardSound;
   keyboardSoundEnabled = settings.keyboardSound;
   saveSettings();
+  updateKeyboardSoundButton();
+}
+
+function updateKeyboardSoundButton() {
   const btn = document.getElementById('keyboard-sound-toggle');
-  btn.textContent = settings.keyboardSound ? '启用' : '禁用';
-  btn.classList.toggle('active');
+  if (btn) {
+    btn.textContent = settings.keyboardSound ? '启用' : '禁用';
+    btn.classList.toggle('active', settings.keyboardSound);
+  }
 }
 
 function openModal() {
