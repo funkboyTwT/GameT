@@ -3,30 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的私密游戏库</title>
+    <title>系统验证</title>
     <style>
-        :root {
-            --bg-color: #121214;
-            --card-bg: #1e1e24;
-            --accent-color: #6366f1;
-            --text-color: #f3f4f6;
-        }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: #121214;
+            color: #f3f4f6;
             margin: 0;
-            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
         }
-
-        /* 验证界面 */
         .auth-container {
-            background-color: var(--card-bg);
+            background-color: #1e1e24;
             padding: 2.5rem;
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
@@ -34,182 +24,95 @@
             width: 100%;
             max-width: 360px;
         }
-
-        .auth-container h2 {
-            margin-bottom: 1.5rem;
-            font-size: 1.5rem;
-            color: #fff;
-        }
-
+        .auth-container h2 { margin-bottom: 1.5rem; font-size: 1.5rem; color: #fff; }
         .auth-container input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #3f3f46;
-            border-radius: 6px;
-            background-color: #121214;
-            color: #fff;
-            font-size: 1rem;
-            box-sizing: border-box;
-            margin-bottom: 1rem;
-            outline: none;
+            width: 100%; padding: 12px; border: 2px solid #3f3f46; border-radius: 6px;
+            background-color: #121214; color: #fff; font-size: 1rem; box-sizing: border-box;
+            margin-bottom: 1rem; outline: none;
         }
-
         .auth-container button {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--accent-color);
-            border: none;
-            border-radius: 6px;
-            color: #fff;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
+            width: 100%; padding: 12px; background-color: #6366f1; border: none;
+            border-radius: 6px; color: #fff; font-size: 1rem; font-weight: bold; cursor: pointer;
         }
-
-        .error-msg {
-            color: #ef4444;
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
-            display: none;
-        }
-
-        /* 游戏界面 */
-        .game-container {
-            display: none;
-            width: 100%;
-            max-width: 1000px;
-            padding: 2rem;
-            box-sizing: border-box;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #27272a;
-            padding-bottom: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .game-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .game-card {
-            background-color: var(--card-bg);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .game-info {
-            padding: 1.5rem;
-        }
-
-        .game-title {
-            font-size: 1.25rem;
-            margin: 0 0 0.5rem 0;
-            color: #fff;
-        }
-
-        .game-desc {
-            font-size: 0.9rem;
-            color: #9ca3af;
-            line-height: 1.4;
-            margin-bottom: 1.5rem;
-        }
-
-        .play-btn {
-            display: block;
-            text-align: center;
-            background-color: var(--accent-color);
-            color: #fff;
-            text-decoration: none;
-            padding: 10px;
-            border-radius: 4px;
-            font-weight: bold;
-        }
+        .error-msg { color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem; display: none; }
     </style>
 </head>
 <body>
 
-    <!-- 1. 密码输入界面 -->
-    <div class="auth-container" id="authBox">
+    <div class="auth-container">
         <h2>🔒 输入访问密码</h2>
         <input type="password" id="passwordInput" placeholder="请输入密码..." onkeydown="if(event.key==='Enter') verifyPassword()">
         <button onclick="verifyPassword()">解锁游戏库</button>
         <div class="error-msg" id="errorMsg">密码错误，请重新输入！</div>
     </div>
 
-    <!-- 2. 游戏展示界面 -->
-    <div class="game-container" id="gameBox">
-        <div class="header">
-            <h1>🎮 我的私密游戏库</h1>
-        </div>
+    <script>
+        // 你指定的访问密码
+        const CORRECT_PASSWORD = "12186010"; 
 
-        <div class="game-grid">
-            <div class="game-card">
-                <div class="game-info">
-                    <h3 class="game-title">Eaglercraft 1.12</h3>
-                    <p class="game-desc">基于 WebAssembly (WASM-GC) 运行的网页版我的世界 1.12.2。</p>
-                    <a href="https://github.io" target="_blank" class="play-btn">立即游玩</a>
+        // 成功解锁后，在 about:blank 页面里动态生成的完整游戏库 HTML 代码
+        const gamePageHTML = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>我的私密游戏库</title>
+            <style>
+                body {
+                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                    background-color: #121214; color: #f3f4f6; margin: 0; padding: 40px 20px;
+                    display: flex; justify-content: center;
+                }
+                .game-container { width: 100%; max-width: 1000px; }
+                .header { border-bottom: 1px solid #27272a; padding-bottom: 1rem; margin-bottom: 2rem; }
+                .header h1 { margin: 0; font-size: 1.8rem; color: #fff; }
+                .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+                .game-card { background-color: #1e1e24; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+                .game-info { padding: 1.5rem; }
+                .game-title { font-size: 1.25rem; margin: 0 0 0.5rem 0; color: #fff; }
+                .game-desc { font-size: 0.9rem; color: #9ca3af; line-height: 1.4; margin-bottom: 1.5rem; }
+                .play-btn { display: block; text-align: center; background-color: #6366f1; color: #fff; text-decoration: none; padding: 10px; border-radius: 4px; font-weight: bold; }
+                .play-btn:hover { background-color: #4f46e5; }
+            </style>
+        </head>
+        <body>
+            <div class="game-container">
+                <div class="header">
+                    <h1>🎮 我的私密游戏库</h1>
+                </div>
+                <div class="game-grid">
+                    <div class="game-card">
+                        <div class="game-info">
+                            <h3 class="game-title">Eaglercraft 1.12</h3>
+                            <p class="game-desc">基于 WebAssembly (WASM-GC) 运行的网页版我的世界 1.12.2，支持直接在浏览器中进行生存与联机。</p>
+                            <a href="https://funkboytwt.github.io/modernclient/wasm/" target="_blank" class="play-btn">立即游玩</a>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <script>
-        // 本地文件销毁核心：利用 name 属性（该属性在本地文件刷新、重载时依然会被留存）
-        if (window.name === 'destroyed_page' || localStorage.getItem('local_accessed') === 'true') {
-            destroyPage();
-        }
-
-        // 设置好的访问密码
-        const CORRECT_PASSWORD = "12186010"; 
+        </body>
+        </html>
+        `;
 
         function verifyPassword() {
             const input = document.getElementById('passwordInput').value;
             const errorMsg = document.getElementById('errorMsg');
-            const authBox = document.getElementById('authBox');
-            const gameBox = document.getElementById('gameBox');
 
             if (input === CORRECT_PASSWORD) {
-                // 密码正确：注入“已使用过”的永久印记
-                window.name = 'destroyed_page';
-                try {
-                    localStorage.setItem('local_accessed', 'true');
-                } catch(e) {}
-
-                // 显示游戏内容
-                authBox.style.display = 'none';
-                gameBox.style.display = 'block';
-                errorMsg.style.display = 'none';
-                document.body.style.alignItems = 'flex-start';
-                document.body.style.paddingTop = '40px';
-
-                // 监听买家任何试图离开、刷新或卸载页面的动作，直接当场抹杀
-                window.addEventListener('beforeunload', destroyPage);
-                window.addEventListener('unload', destroyPage);
+                // 将当前窗口直接重定向到系统空白页 about:blank
+                window.location.href = "about:blank";
+                
+                // 延迟注入内存，确保成功在空白页加载游戏单页
+                setTimeout(() => {
+                    document.open();
+                    document.write(gamePageHTML);
+                    document.close();
+                }, 50);
             } else {
                 errorMsg.style.display = 'block';
                 document.getElementById('passwordInput').value = '';
                 document.getElementById('passwordInput').focus();
             }
-        }
-
-        // 终极自毁函数：清空所有代码，将整个页面变成纯黑色，并且让任何技术都无法还原
-        function destroyPage() {
-            window.name = 'destroyed_page';
-            try {
-                localStorage.setItem('local_accessed', 'true');
-            } catch(e) {}
-            
-            // 彻底抹除页面所有的 HTML 节点和脚本
-            document.open();
-            document.write('<html><head><title>about:blank</title></head><body style="background:#000000;"></body></html>');
-            document.close();
         }
     </script>
 </body>
