@@ -24,7 +24,7 @@
             min-height: 100vh;
         }
 
-        /* 密码验证界面样式 */
+        /* 验证界面 */
         .auth-container {
             background-color: var(--card-bg);
             padding: 2.5rem;
@@ -52,11 +52,6 @@
             box-sizing: border-box;
             margin-bottom: 1rem;
             outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .auth-container input:focus {
-            border-color: var(--accent-color);
         }
 
         .auth-container button {
@@ -69,11 +64,6 @@
             font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .auth-container button:hover {
-            background-color: #4f46e5;
         }
 
         .error-msg {
@@ -83,7 +73,7 @@
             display: none;
         }
 
-        /* 游戏库内容界面（默认隐藏） */
+        /* 游戏界面 */
         .game-container {
             display: none;
             width: 100%;
@@ -101,25 +91,6 @@
             margin-bottom: 2rem;
         }
 
-        .header h1 {
-            margin: 0;
-            font-size: 1.8rem;
-        }
-
-        .logout-btn {
-            background-color: #27272a;
-            border: none;
-            padding: 8px 16px;
-            color: #d1d5db;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .logout-btn:hover {
-            background-color: #3f3f46;
-            color: #fff;
-        }
-
         .game-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -131,18 +102,10 @@
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: transform 0.2s;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .game-card:hover {
-            transform: translateY(-4px);
         }
 
         .game-info {
             padding: 1.5rem;
-            flex-grow: 1;
         }
 
         .game-title {
@@ -167,11 +130,6 @@
             padding: 10px;
             border-radius: 4px;
             font-weight: bold;
-            transition: background-color 0.2s;
-        }
-
-        .play-btn:hover {
-            background-color: #4f46e5;
         }
     </style>
 </head>
@@ -189,15 +147,13 @@
     <div class="game-container" id="gameBox">
         <div class="header">
             <h1>🎮 我的私密游戏库</h1>
-            <button class="logout-btn" onclick="logout()">锁定</button>
         </div>
 
         <div class="game-grid">
-            <!-- 游戏卡片 1 -->
             <div class="game-card">
                 <div class="game-info">
                     <h3 class="game-title">Eaglercraft 1.12</h3>
-                    <p class="game-desc">基于 WebAssembly (WASM-GC) 运行的网页版我的世界 1.12.2，支持直接在浏览器中进行生存与联机。</p>
+                    <p class="game-desc">基于 WebAssembly (WASM-GC) 运行的网页版我的世界 1.12.2。</p>
                     <a href="https://github.io" target="_blank" class="play-btn">立即游玩</a>
                 </div>
             </div>
@@ -205,7 +161,14 @@
     </div>
 
     <script>
-        // 已经设置好的访问密码
+        // 核心安全逻辑：页面加载时立刻检查
+        // 如果买家之前已经解锁过，或者尝试刷新页面，直接重定向到 about:blank 并自我毁灭
+        if (sessionStorage.getItem('page_accessed') === 'true') {
+            document.body.innerHTML = ''; // 清空所有网页内容
+            window.location.replace('about:blank'); // 强制跳到空白页
+        }
+
+        // 设置好的访问密码
         const CORRECT_PASSWORD = "12186010"; 
 
         function verifyPassword() {
@@ -215,25 +178,26 @@
             const gameBox = document.getElementById('gameBox');
 
             if (input === CORRECT_PASSWORD) {
+                // 密码正确：标记该页面已被“消耗”
+                sessionStorage.setItem('page_accessed', 'true');
+                
+                // 显示游戏内容
                 authBox.style.display = 'none';
                 gameBox.style.display = 'block';
                 errorMsg.style.display = 'none';
                 document.body.style.alignItems = 'flex-start';
                 document.body.style.paddingTop = '40px';
+
+                // 监听买家是否试图离开或刷新页面，一旦触发立刻清空
+                window.addEventListener('beforeunload', function () {
+                    document.body.innerHTML = '';
+                    window.location.replace('about:blank');
+                });
             } else {
                 errorMsg.style.display = 'block';
                 document.getElementById('passwordInput').value = '';
                 document.getElementById('passwordInput').focus();
             }
-        }
-
-        function logout() {
-            document.getElementById('passwordInput').value = '';
-            document.getElementById('errorMsg').style.display = 'none';
-            document.getElementById('authBox').style.display = 'block';
-            document.getElementById('gameBox').style.display = 'none';
-            document.body.style.alignItems = 'center';
-            document.body.style.paddingTop = '0';
         }
     </script>
 </body>
