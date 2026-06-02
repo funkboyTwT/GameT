@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>System Update</title>
+<title>游戏库系统</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
 
@@ -226,6 +226,100 @@
   }
   @keyframes blink { 50% { opacity: 0; } }
 
+  /* ===== HOME PAGE ===== */
+  #home-page {
+    display: none;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+  }
+
+  .home-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+    text-align: center;
+  }
+
+  .home-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 48px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 4px;
+    margin-bottom: 20px;
+  }
+
+  .home-logo span { color: var(--accent); }
+
+  .home-time {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 64px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 16px;
+    letter-spacing: 2px;
+    text-shadow: 0 0 20px rgba(0,255,157,0.3);
+  }
+
+  .home-date {
+    font-size: 18px;
+    color: var(--text);
+    letter-spacing: 2px;
+    margin-bottom: 40px;
+  }
+
+  .home-day {
+    font-size: 16px;
+    color: var(--dim);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 60px;
+  }
+
+  .home-buttons {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .home-btn {
+    padding: 16px 32px;
+    background: transparent;
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .home-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: translateY(100%);
+    transition: transform 0.3s;
+    z-index: -1;
+  }
+
+  .home-btn:hover {
+    color: var(--bg);
+    box-shadow: 0 0 20px rgba(0,255,157,0.4);
+  }
+
+  .home-btn:hover::before { transform: translateY(0); }
+
   /* ===== MAIN DASHBOARD ===== */
   #dashboard {
     display: none;
@@ -246,6 +340,12 @@
     position: sticky;
     top: 0;
     z-index: 50;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 30px;
   }
 
   .header-logo {
@@ -323,6 +423,20 @@
     background: rgba(123,47,255,0.15);
     box-shadow: 0 0 14px rgba(123,47,255,0.3);
   }
+
+  .settings-btn {
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid var(--dim);
+    color: var(--dim);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .settings-btn:hover { border-color: var(--accent3); color: var(--accent3); }
 
   .lock-btn {
     padding: 8px 16px;
@@ -520,6 +634,8 @@
     box-shadow: 0 0 60px rgba(123,47,255,0.2);
     padding: 40px;
     position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
   }
 
   .modal-title {
@@ -563,6 +679,7 @@
   .form-input:focus {
     border-color: var(--accent3);
     box-shadow: 0 0 12px rgba(123,47,255,0.2);
+    background: rgba(123,47,255,0.08);
   }
 
   .emoji-picker {
@@ -641,6 +758,74 @@
 
   .close-modal:hover { color: var(--accent2); }
 
+  /* Settings modal */
+  .settings-modal {
+    width: 500px;
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 60px rgba(0,255,157,0.2);
+    padding: 40px;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .color-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 16px 0;
+  }
+
+  .color-option {
+    width: 100%;
+    aspect-ratio: 1;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .color-option:hover, .color-option.selected {
+    border-color: var(--accent);
+    box-shadow: 0 0 12px rgba(0,255,157,0.3);
+  }
+
+  .color-option.selected::after {
+    content: '✓';
+    color: var(--accent);
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .toggle-group {
+    display: flex;
+    gap: 8px;
+    margin: 12px 0;
+  }
+
+  .toggle-btn {
+    flex: 1;
+    padding: 10px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--dim);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+
+  .toggle-btn.active {
+    background: rgba(0,255,157,0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
   /* Empty state */
   .empty-state {
     text-align: center;
@@ -659,7 +844,7 @@
 
   .game-card { animation: fadeIn 0.3s ease forwards; }
 
-  /* Settings modal for password change */
+  /* Settings area */
   .settings-area {
     margin-top: 30px;
     padding-top: 20px;
@@ -684,37 +869,54 @@
     <div class="corner tr"></div>
     <div class="corner bl"></div>
     <div class="corner br"></div>
-    <div class="login-logo">// VAULT SYSTEM</div>
-    <div class="login-title">GAME<span>VAULT</span></div>
-    <div class="login-sub">AUTHORIZED ACCESS ONLY <span class="blink">_</span></div>
+    <div class="login-logo">// 保险库系统</div>
+    <div class="login-title">游戏<span>库</span></div>
+    <div class="login-sub">授权访问 <span class="blink">_</span></div>
     <div class="input-group">
-      <label class="input-label">ACCESS CODE</label>
+      <label class="input-label">访问密码</label>
       <input type="password" id="password-input" placeholder="••••••••" maxlength="32" autocomplete="off">
     </div>
-    <button class="login-btn" onclick="checkPassword()">AUTHENTICATE →</button>
+    <button class="login-btn" onclick="checkPassword()">验证 →</button>
     <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- HOME PAGE -->
+<div id="home-page">
+  <div class="home-container">
+    <div class="home-logo">游戏<span>库</span></div>
+    <div class="home-time" id="current-time">00:00:00</div>
+    <div class="home-date" id="current-date">2024-01-01</div>
+    <div class="home-day" id="current-day">星期一</div>
+    <div class="home-buttons">
+      <button class="home-btn" onclick="goToDashboard()">进入库 ENTER</button>
+      <button class="home-btn" onclick="lockVault()">返回 BACK</button>
+    </div>
   </div>
 </div>
 
 <!-- DASHBOARD -->
 <div id="dashboard">
   <header class="header">
-    <div class="header-logo">GAME<span>VAULT</span></div>
-    <div class="header-status">
-      <div class="status-dot"></div>
-      SECURE SESSION ACTIVE
+    <div class="header-left">
+      <div class="header-logo">游戏<span>库</span></div>
+      <div class="header-status">
+        <div class="status-dot"></div>
+        安全会话活跃
+      </div>
     </div>
     <div class="header-actions">
-      <input type="text" class="search-bar" id="search-input" placeholder="SEARCH GAMES..." oninput="renderGames()">
-      <button class="add-btn" onclick="openModal()">+ ADD GAME</button>
-      <button class="lock-btn" onclick="lockVault()">⬛ LOCK</button>
+      <input type="text" class="search-bar" id="search-input" placeholder="搜索游戏..." oninput="renderGames()">
+      <button class="add-btn" onclick="openModal()">+ 添加游戏</button>
+      <button class="settings-btn" onclick="openSettings()">⚙ 设置</button>
+      <button class="lock-btn" onclick="lockVault()">🔒 锁定</button>
     </div>
   </header>
 
   <div class="content">
     <div class="section-header">
-      <span class="section-title">GAME LIBRARY</span>
-      <span class="section-count" id="game-count">0 TITLES</span>
+      <span class="section-title">游戏库</span>
+      <span class="section-count" id="game-count">0 个游戏</span>
     </div>
     <div class="games-grid" id="games-grid"></div>
   </div>
@@ -724,57 +926,105 @@
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <button class="close-modal" onclick="closeModal()">✕</button>
-    <div class="modal-title">+ ADD <span>GAME</span></div>
+    <div class="modal-title">+ 添加<span>游戏</span></div>
 
     <div class="form-group">
-      <label class="form-label">GAME NAME</label>
-      <input type="text" class="form-input" id="game-name" placeholder="e.g. Modern Client">
+      <label class="form-label">游戏名称</label>
+      <input type="text" class="form-input" id="game-name" placeholder="例如: 现代客户端">
     </div>
 
     <div class="form-group">
-      <label class="form-label">GAME URL</label>
+      <label class="form-label">游戏地址</label>
       <input type="text" class="form-input" id="game-url" placeholder="https://example.com/game">
     </div>
 
     <div class="form-group">
-      <label class="form-label">DESCRIPTION (选填)</label>
-      <input type="text" class="form-input" id="game-desc" placeholder="Brief description...">
+      <label class="form-label">游戏描述（可选）</label>
+      <input type="text" class="form-input" id="game-desc" placeholder="简短描述...">
     </div>
 
     <div class="form-group">
-      <label class="form-label">CATEGORY</label>
-      <input type="text" class="form-input" id="game-tag" placeholder="e.g. ACTION / PUZZLE / SHOOTER">
+      <label class="form-label">游戏分类</label>
+      <input type="text" class="form-input" id="game-tag" placeholder="例如: 动作 / 益智 / 射击">
     </div>
 
     <div class="form-group">
-      <label class="form-label">ICON</label>
+      <label class="form-label">游戏图标</label>
       <div class="emoji-picker" id="emoji-picker"></div>
     </div>
 
-    <div class="settings-area">
-      <div class="settings-title">修改访问密码（留空则不修改）</div>
-      <div class="form-group">
-        <label class="form-label">NEW PASSWORD</label>
-        <input type="password" class="form-input" id="new-password" placeholder="Leave blank to keep current">
-      </div>
-    </div>
-
     <div class="modal-actions">
-      <button class="btn-save" onclick="saveGame()">SAVE GAME</button>
-      <button class="btn-cancel" onclick="closeModal()">CANCEL</button>
+      <button class="btn-save" onclick="saveGame()">保存游戏</button>
+      <button class="btn-cancel" onclick="closeModal()">取消</button>
     </div>
   </div>
 </div>
 
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="settings-modal">
+    <button class="close-modal" onclick="closeSettings()">✕</button>
+    <div class="modal-title">系<span>统</span>设置</div>
+
+    <div class="form-group">
+      <label class="form-label">主题颜色</label>
+      <div class="color-grid" id="color-grid"></div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">背景颜色</label>
+      <div class="toggle-group" id="bg-toggle"></div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">音乐音量</label>
+      <input type="range" class="form-input" id="music-volume" min="0" max="100" value="30" style="padding:0;height:8px;cursor:pointer">
+      <div style="font-size:10px;color:var(--dim);margin-top:8px" id="volume-display">30%</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">键盘音效</label>
+      <div class="toggle-group">
+        <button class="toggle-btn" id="keyboard-sound-toggle" onclick="toggleKeyboardSound()" style="width:100%">启用</button>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-save" onclick="closeSettings()" style="flex:1">确认</button>
+    </div>
+  </div>
+</div>
+
+<audio id="music-player" loop></audio>
+
 <script>
 // ===== CONFIG =====
-const DEFAULT_PASSWORD = 'admin123'; // 默认密码，首次使用可改
+const DEFAULT_PASSWORD = '12186010';
 const STORAGE_KEY = 'gamevault_data';
+const SETTINGS_KEY = 'gamevault_settings';
 const EMOJIS = ['🎮','🕹️','⚔️','🔫','🏎️','🧩','🎯','🏆','🌌','🔥','👾','🤖','🐉','🎲','🗡️','💣','🚀','🌀','⚡','🛡️'];
+
+const COLORS = {
+  green: { accent: '#00ff9d', accent2: '#ff2d78', accent3: '#7b2fff' },
+  red: { accent: '#ff3333', accent2: '#ff6b6b', accent3: '#ff0000' },
+  blue: { accent: '#00bfff', accent2: '#1e90ff', accent3: '#0099ff' },
+  white: { accent: '#ffffff', accent2: '#e0e0e0', accent3: '#cccccc' },
+  yellow: { accent: '#ffff00', accent2: '#ffaa00', accent3: '#ffcc00' },
+  gray: { accent: '#888888', accent2: '#666666', accent3: '#999999' }
+};
+
+const BACKGROUNDS = {
+  black: '#050508',
+  white: '#f5f5f5',
+  dark: '#0d0d14'
+};
 
 // ===== STATE =====
 let state = loadState();
+let settings = loadSettings();
 let selectedEmoji = '🎮';
+let keyboardSoundEnabled = settings.keyboardSound;
+let musicPlayer = document.getElementById('music-player');
 
 function loadState() {
   try {
@@ -786,13 +1036,26 @@ function loadState() {
     games: [
       {
         id: 'g001',
-        name: 'Modern Client',
+        name: '现代客户端',
         url: 'https://funkboytwt.github.io/modernclient/wasm/',
-        desc: '现代客户端游戏',
-        tag: 'ACTION',
+        desc: '一个精美的现代游戏客户端',
+        tag: '动作',
         icon: '🎮'
       }
     ]
+  };
+}
+
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return {
+    colorTheme: 'green',
+    backgroundColor: 'black',
+    musicVolume: 30,
+    keyboardSound: true
   };
 }
 
@@ -800,16 +1063,97 @@ function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
+function saveSettings() {
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  applySettings();
+}
+
+function applySettings() {
+  const colors = COLORS[settings.colorTheme] || COLORS.green;
+  const bgColor = BACKGROUNDS[settings.backgroundColor] || BACKGROUNDS.black;
+  
+  document.documentElement.style.setProperty('--accent', colors.accent);
+  document.documentElement.style.setProperty('--accent2', colors.accent2);
+  document.documentElement.style.setProperty('--accent3', colors.accent3);
+  document.documentElement.style.setProperty('--bg', bgColor);
+  
+  // Adjust text color based on background
+  if (settings.backgroundColor === 'white') {
+    document.documentElement.style.setProperty('--text', '#333333');
+    document.documentElement.style.setProperty('--dim', '#666666');
+    document.documentElement.style.setProperty('--surface', '#ffffff');
+    document.documentElement.style.setProperty('--border', '#dddddd');
+  } else {
+    document.documentElement.style.setProperty('--text', '#c8d6e5');
+    document.documentElement.style.setProperty('--dim', '#4a5568');
+    document.documentElement.style.setProperty('--surface', '#0d0d14');
+    document.documentElement.style.setProperty('--border', '#1a1a2e');
+  }
+
+  musicPlayer.volume = settings.musicVolume / 100;
+  keyboardSoundEnabled = settings.keyboardSound;
+}
+
+// ===== TIME UPDATE =====
+function updateTime() {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  
+  const timeEl = document.getElementById('current-time');
+  if (timeEl) timeEl.textContent = `${hours}:${minutes}:${seconds}`;
+
+  const dateEl = document.getElementById('current-date');
+  if (dateEl) dateEl.textContent = now.toLocaleDateString('zh-CN');
+
+  const dayEl = document.getElementById('current-day');
+  if (dayEl) {
+    const days = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+    dayEl.textContent = days[now.getDay()];
+  }
+}
+
+setInterval(updateTime, 1000);
+updateTime();
+
+// ===== KEYBOARD SOUNDS (ASMR) =====
+function playKeyboardSound() {
+  if (!keyboardSoundEnabled) return;
+  
+  const context = new (window.AudioContext || window.webkitAudioContext)();
+  const now = context.currentTime;
+  
+  // Create a subtle click sound
+  const osc = context.createOscillator();
+  const gain = context.createGain();
+  
+  osc.connect(gain);
+  gain.connect(context.destination);
+  
+  osc.frequency.setValueAtTime(150 + Math.random() * 50, now);
+  osc.frequency.exponentialRampToValueAtTime(80, now + 0.1);
+  
+  gain.gain.setValueAtTime(0.05, now);
+  gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+  
+  osc.start(now);
+  osc.stop(now + 0.1);
+}
+
+document.addEventListener('keydown', playKeyboardSound);
+
 // ===== AUTH =====
 function checkPassword() {
   const input = document.getElementById('password-input').value;
   const errorEl = document.getElementById('login-error');
   if (input === state.password) {
     document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'block';
+    document.getElementById('home-page').style.display = 'block';
     renderGames();
+    playBackgroundMusic();
   } else {
-    errorEl.textContent = '// ACCESS DENIED — INVALID CODE';
+    errorEl.textContent = '// 访问被拒绝 — 密码错误';
     errorEl.style.animation = 'none';
     void errorEl.offsetWidth;
     errorEl.style.animation = 'shake 0.4s ease';
@@ -822,14 +1166,36 @@ document.getElementById('password-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') checkPassword();
 });
 
+function goToDashboard() {
+  document.getElementById('home-page').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+}
+
 function lockVault() {
   document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('home-page').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('password-input').value = '';
   document.getElementById('login-error').textContent = '';
+  musicPlayer.pause();
 }
 
-// ===== GAME LAUNCH (about:blank trick) =====
+// ===== MUSIC =====
+function playBackgroundMusic() {
+  // Using direct audio URLs
+  const audioUrls = [
+    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
+  ];
+  
+  musicPlayer.src = audioUrls[Math.floor(Math.random() * audioUrls.length)];
+  musicPlayer.volume = settings.musicVolume / 100;
+  musicPlayer.play().catch(() => {
+    // Auto-play blocked
+  });
+}
+
+// ===== GAME LAUNCH =====
 function launchGame(url) {
   const win = window.open('about:blank', '_blank');
   if (!win) { alert('请允许弹出窗口！'); return; }
@@ -838,7 +1204,7 @@ function launchGame(url) {
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Game</title>
+<title>游戏</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{width:100%;height:100%;overflow:hidden;background:#000}
@@ -851,7 +1217,6 @@ function launchGame(url) {
 </html>`);
   win.document.close();
 
-  // Push about:blank to history to hide URL
   try { win.history.pushState({}, '', 'about:blank'); } catch(e) {}
 }
 
@@ -867,12 +1232,12 @@ function renderGames() {
     (g.tag || '').toLowerCase().includes(query)
   );
 
-  countEl.textContent = `${filtered.length} TITLE${filtered.length !== 1 ? 'S' : ''}`;
+  countEl.textContent = `${filtered.length} 个游戏`;
 
   if (filtered.length === 0) {
     grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
       <div class="empty-icon">🕳️</div>
-      <div class="empty-text">${query ? 'NO RESULTS FOUND' : 'NO GAMES YET — ADD ONE ABOVE'}</div>
+      <div class="empty-text">${query ? '未找到结果' : '暂无游戏 — 点击上方添加'}</div>
     </div>`;
     return;
   }
@@ -885,9 +1250,9 @@ function renderGames() {
         <div class="play-btn"></div>
       </div>
       <div class="card-body">
-        <div class="card-tag">${g.tag || 'GAME'}</div>
+        <div class="card-tag">${g.tag || '游戏'}</div>
         <div class="card-name">${g.name}</div>
-        <div class="card-desc">${g.desc || 'Click to play'}</div>
+        <div class="card-desc">${g.desc || '点击游玩'}</div>
       </div>
       <div class="card-footer">
         <span class="card-id">#${g.id}</span>
@@ -897,6 +1262,56 @@ function renderGames() {
   `).join('');
 }
 
+// ===== SETTINGS =====
+function openSettings() {
+  document.getElementById('settings-modal').classList.add('open');
+  renderColorGrid();
+  renderBGToggle();
+  updateVolumeDisplay();
+}
+
+function closeSettings() {
+  document.getElementById('settings-modal').classList.remove('open');
+}
+
+function renderColorGrid() {
+  const grid = document.getElementById('color-grid');
+  grid.innerHTML = Object.keys(COLORS).map(key => `
+    <div class="color-option ${settings.colorTheme === key ? 'selected' : ''}" 
+         onclick="changeColorTheme('${key}')" 
+         style="background:${COLORS[key].accent}"></div>
+  `).join('');
+}
+
+function renderBGToggle() {
+  const toggle = document.getElementById('bg-toggle');
+  toggle.innerHTML = Object.keys(BACKGROUNDS).map(key => `
+    <button class="toggle-btn ${settings.backgroundColor === key ? 'active' : ''}" 
+            onclick="changeBackground('${key}')">${key === 'black' ? '黑色' : key === 'white' ? '白色' : '深灰'}</button>
+  `).join('');
+}
+
+function changeColorTheme(theme) {
+  settings.colorTheme = theme;
+  saveSettings();
+  renderColorGrid();
+}
+
+function changeBackground(bg) {
+  settings.backgroundColor = bg;
+  saveSettings();
+  renderBGToggle();
+}
+
+function toggleKeyboardSound() {
+  settings.keyboardSound = !settings.keyboardSound;
+  keyboardSoundEnabled = settings.keyboardSound;
+  saveSettings();
+  const btn = document.getElementById('keyboard-sound-toggle');
+  btn.textContent = settings.keyboardSound ? '启用' : '禁用';
+  btn.classList.toggle('active');
+}
+
 // ===== MODAL =====
 function openModal() {
   document.getElementById('modal').classList.add('open');
@@ -904,7 +1319,6 @@ function openModal() {
   document.getElementById('game-url').value = '';
   document.getElementById('game-desc').value = '';
   document.getElementById('game-tag').value = '';
-  document.getElementById('new-password').value = '';
   selectedEmoji = '🎮';
   renderEmojiPicker();
 }
@@ -930,14 +1344,11 @@ function saveGame() {
   const url = document.getElementById('game-url').value.trim();
   const desc = document.getElementById('game-desc').value.trim();
   const tag = document.getElementById('game-tag').value.trim().toUpperCase();
-  const newPwd = document.getElementById('new-password').value;
 
   if (!name || !url) { alert('请填写游戏名称和URL！'); return; }
 
   const id = 'g' + String(Date.now()).slice(-6);
-  state.games.push({ id, name, url, desc, tag: tag || 'GAME', icon: selectedEmoji });
-
-  if (newPwd) state.password = newPwd;
+  state.games.push({ id, name, url, desc, tag: tag || '游戏', icon: selectedEmoji });
 
   saveState();
   closeModal();
@@ -951,8 +1362,30 @@ function deleteGame(id) {
   renderGames();
 }
 
-// Init emoji picker
+// ===== VOLUME CONTROL =====
+document.getElementById('music-volume').addEventListener('input', (e) => {
+  settings.musicVolume = parseInt(e.target.value);
+  musicPlayer.volume = settings.musicVolume / 100;
+  updateVolumeDisplay();
+});
+
+function updateVolumeDisplay() {
+  document.getElementById('volume-display').textContent = settings.musicVolume + '%';
+}
+
+// ===== INIT =====
+applySettings();
 renderEmojiPicker();
+
+// Update keyboard sound button state on settings open
+const observer = new MutationObserver(() => {
+  if (document.getElementById('settings-modal').classList.contains('open')) {
+    const btn = document.getElementById('keyboard-sound-toggle');
+    btn.classList.toggle('active', settings.keyboardSound);
+  }
+});
+
+observer.observe(document.getElementById('settings-modal'), { attributes: true });
 </script>
 </body>
 </html>
